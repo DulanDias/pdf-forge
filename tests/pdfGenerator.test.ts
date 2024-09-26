@@ -9,7 +9,7 @@ describe('PDFGenerator', () => {
     const outputDir = path.resolve(__dirname, '../output');
     try {
       await fs.mkdir(outputDir);
-    } catch (err) {
+    } catch (err: any) {  // Cast err to any
       if (err.code !== 'EEXIST') throw err;
     }
   });

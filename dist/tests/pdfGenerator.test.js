@@ -22,7 +22,7 @@ describe('PDFGenerator', () => {
         try {
             yield promises_1.default.mkdir(outputDir);
         }
-        catch (err) {
+        catch (err) { // Cast err to any
             if (err.code !== 'EEXIST')
                 throw err;
         }
