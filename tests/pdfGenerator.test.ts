@@ -1,9 +1,11 @@
 import { PDFGenerator } from '../src/pdfGenerator';
 import fs from 'fs/promises';
 import path from 'path';
+import { LoremIpsum } from 'lorem-ipsum';
 
 describe('PDFGenerator', () => {
   let pdfGenerator: PDFGenerator;
+  const lorem = new LoremIpsum();
 
   beforeAll(async () => {
     const outputDir = path.resolve(__dirname, '../output');
@@ -65,8 +67,10 @@ describe('PDFGenerator', () => {
       </div>
     `;
 
+    const loremContent = lorem.generateParagraphs(10);
+
     const htmlContent = `
-    <html><body><p>This is content for multiple pages.</p></body></html>
+    <html><body><p>This is content for multiple pages.</p><p>${loremContent}</p></body></html>
     `;
 
     const pdfBuffer = await pdfGenerator.generatePDF(htmlContent, {}, {
@@ -84,8 +88,11 @@ describe('PDFGenerator', () => {
   });
 
   it('should apply top margin from second page onwards', async () => {
+
+    const loremContent = lorem.generateParagraphs(10);
+
     const htmlContent = `
-    <html><body><p>This content spans multiple pages.</p></body></html>
+    <html><body><p>This content spans multiple pages.</p><p>${loremContent}</p></body></html>
     `;
 
     const headerHtml = `<div style="font-size: 12px; text-align: center;">Header on First Page</div>`;
