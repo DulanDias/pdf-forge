@@ -60,6 +60,22 @@ export class PDFGenerator {
             await applyWatermark(page, options.watermark);
         }
 
+        // Add conditional CSS for the first page header only
+        let headerTemplate = options.headerTemplate || '';
+        if (options.firstPageHeaderOnly) {
+            headerTemplate = `
+      <div style="width: 100%; text-align: center;">
+        <style>
+          .first-page-header { display: block; }
+          .pageNumber:not(:first-child) .first-page-header { display: none; }
+        </style>
+        <div class="first-page-header">
+          ${options.headerTemplate}
+        </div>
+      </div>
+    `;
+        }
+
         // Generate the PDF with the provided options
         let pdfBuffer = await page.pdf({
             format: options.pageSize || 'A4',
