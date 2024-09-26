@@ -18,94 +18,219 @@ npm install pdf-forge
 
 ## Usage
 
+### Example 1: Generate PDFs using HTML/CSS, RichText
+
 ```typescript
 import { PDFGenerator } from 'pdf-forge';
 import fs from 'fs/promises';
 
 const pdfGenerator = new PDFGenerator();
 
-const pdfBuffer = await pdfGenerator.generatePDF('./templates/sampleTemplate.html', { title: 'Hello', content: 'World' }, {
+const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello World!</h1>
+    <p>This is a PDF generated with rich HTML content, including CSS styling.</p>
+</body>
+</html>
+`;
+
+const pdfBuffer = await pdfGenerator.generatePDF(htmlContent, {}, {
+  pageSize: 'A4'
+});
+
+await fs.writeFile('output/richText.pdf', pdfBuffer);
+```
+
+### Example 2: Include headers and footers, apply header only to the first page
+
+```typescript
+const headerHtml = `
+  <div style="font-size: 12px; text-align: center;">
+    First Page Header
+  </div>
+`;
+
+const footerHtml = `
+  <div style="font-size: 10px; text-align: center;">
+    Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+  </div>
+`;
+
+const pdfBuffer = await pdfGenerator.generatePDF(htmlContent, {}, {
+  headerTemplate: headerHtml,
+  footerTemplate: footerHtml,
+  displayHeaderFooter: true,
+  firstPageHeaderOnly: true,  // Show header only on the first page
+  pageSize: 'A4'
+});
+
+await fs.writeFile('output/headerFooterFirstPageOnly.pdf', pdfBuffer);
+```
+
+### Example 3: Apply top margin from second page onwards
+
+```typescript
+const pdfBuffer = await pdfGenerator.generatePDF(htmlContent, {}, {
+  headerTemplate: headerHtml,
+  footerTemplate: footerHtml,
+  displayHeaderFooter: true,
+  firstPageHeaderOnly: true,
+  topMarginSecondPage: '2in',  // Apply top margin from the second page onwards
+  pageSize: 'A4'
+});
+
+await fs.writeFile('output/topMarginSecondPage.pdf', pdfBuffer);
+```
+
+### Example 4: Place page breaks appropriately
+
+```typescript
+const htmlWithPageBreaks = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+<body>
+    <h1>Page 1</h1>
+    <p>Content for the first page.</p>
+
+    <div class="page-break"></div>
+
+    <h1>Page 2</h1>
+    <p>Content for the second page.</p>
+</body>
+</html>
+`;
+
+const pdfBuffer = await pdfGenerator.generatePDF(htmlWithPageBreaks, {}, {
+  pageSize: 'A4'
+});
+
+await fs.writeFile('output/pageBreaks.pdf', pdfBuffer);
+```
+
+### Example 5: Configurable page size, margins, etc.
+
+```typescript
+const pdfBuffer = await pdfGenerator.generatePDF(htmlContent, {}, {
+  pageSize: 'Letter',
+  margin: { top: '1in', bottom: '1in', left: '1in', right: '1in' },
+  landscape: true,
+});
+
+await fs.writeFile('output/customPageSetup.pdf', pdfBuffer);
+```
+
+### Example 6: Support fonts, advanced styling, and tables
+
+```typescript
+const htmlWithFontsAndTables = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Styled PDF with Fonts and Tables</h1>
+    <p>This PDF contains custom fonts and a styled table:</p>
+    <table>
+        <tr>
+            <th>Header 1</th>
+            <th>Header 2</th>
+        </tr>
+        <tr>
+            <td>Row 1, Cell 1</td>
+            <td>Row 1, Cell 2</td>
+        </tr>
+        <tr>
+            <td>Row 2, Cell 1</td>
+            <td>Row 2, Cell 2</td>
+        </tr>
+    </table>
+</body>
+</html>
+`;
+
+const pdfBuffer = await pdfGenerator.generatePDF(htmlWithFontsAndTables, {}, {
+  pageSize: 'A4'
+});
+
+await fs.writeFile('output/fontsAndTables.pdf', pdfBuffer);
+```
+
+### Example 7: Configurable headers and footers with images, rich text, and SVG
+
+```typescript
+const headerWithImageAndSvg = `
+  <div style="text-align: center;">
+    <img src="https://example.com/logo.png" width="100" />
+    <svg height="50" width="200">
+      <rect width="200" height="50" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" />
+    </svg>
+  </div>
+`;
+
+const pdfBuffer = await pdfGenerator.generatePDF(htmlContent, {}, {
+  headerTemplate: headerWithImageAndSvg,
+  footerTemplate: footerHtml,
+  displayHeaderFooter: true,
+  pageSize: 'A4'
+});
+
+await fs.writeFile('output/headerWithImageAndSvg.pdf', pdfBuffer);
+```
+
+### Example 8: Support for overlays and watermarks
+
+```typescript
+const pdfBuffer = await pdfGenerator.generatePDF(htmlContent, {}, {
   watermark: {
     text: {
       text: 'Confidential',
-      fontSize: 50,
-      opacity: 0.1,
+      fontSize: 60,
+      color: 'rgba(255, 0, 0, 0.3)',
       rotation: 45
     }
   },
-  headerTemplate: '<div style="text-align: center;">Custom Header</div>',
-  footerTemplate: '<div style="text-align: center;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>',
-  pageSize: 'A4',
-  margin: { top: '1in', bottom: '1in', left: '1in', right: '1in' },
+  pageSize: 'A4'
 });
 
-await fs.writeFile('output/sample.pdf', pdfBuffer);
-```
-
-### Watermark Options
-You can apply different types of watermarks:
-
-1. **Text Watermark**:
-```typescript
-watermark: {
-  text: {
-    text: 'Confidential',
-    fontSize: 50,
-    opacity: 0.1,
-    rotation: 45
-  }
-}
-```
-
-2. **Image Watermark**:
-```typescript
-watermark: {
-  image: {
-    imageUrl: 'https://example.com/watermark.png',
-    width: 200,
-    height: 200,
-    opacity: 0.2,
-    position: 'center'
-  }
-}
-```
-
-3. **Pattern Watermark** (e.g., grid or diagonal lines):
-```typescript
-watermark: {
-  pattern: {
-    type: 'grid',
-    color: 'rgba(0, 0, 0, 0.1)',
-    thickness: 1,
-    spacing: 20
-  }
-}
-```
-
-### Header and Footer Customization
-You can customize headers and footers by passing HTML as the template:
-```typescript
-headerTemplate: '<div style="text-align: center;">My Custom Header</div>',
-footerTemplate: '<div style="text-align: center;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>'
-```
-
-### PDF Options
-```typescript
-{
-  headerTemplate?: string; // Custom header HTML
-  footerTemplate?: string; // Custom footer HTML
-  displayHeaderFooter?: boolean; // Whether to display headers and footers
-  firstPageHeaderOnly?: boolean; // Header only on the first page
-  topMarginSecondPage?: string; // Top margin starting from second page
-  pageSize?: 'Letter' | 'A4' | 'Legal' | string; // Page size
-  margin?: { top: string, bottom: string, left: string, right: string }; // Page margins
-  scale?: number; // Scale of the page rendering
-  landscape?: boolean; // Render the PDF in landscape mode
-  printBackground?: boolean; // Include background graphics
-  preferCSSPageSize?: boolean; // Use CSS-defined page sizes
-  watermark?: WatermarkOptions; // Watermark configurations
-  password?: string; // Password for the generated PDF
-}
+await fs.writeFile('output/watermark.pdf', pdfBuffer);
 ```
 
 ## Running Tests
