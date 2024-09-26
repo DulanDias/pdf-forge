@@ -1,0 +1,23 @@
+{
+    "name": "node-pdf-generator",
+    "version": "1.0.0",
+    "description": "Node.js package for generating PDFs with HTML/CSS, watermarks, headers, footers, and more.",
+    "main": "dist/index.js",
+    "scripts": {
+      "build": "tsc",
+      "test": "jest",
+      "start": "node dist/index.js"
+    },
+    "dependencies": {
+      "puppeteer": "^10.0.0",
+      "sharp": "^0.28.0",
+      "handlebars": "^4.7.7",
+      "pdf-lib": "^1.16.0"
+    },
+    "devDependencies": {
+      "typescript": "^4.0.0",
+      "jest": "^27.0.0",
+      "@types/jest": "^27.0.0"
+    }
+  }
+  
