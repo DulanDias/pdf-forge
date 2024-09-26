@@ -73,7 +73,7 @@ describe('PDFGenerator', () => {
         Page <span class="pageNumber"></span> of <span class="totalPages"></span>
       </div>
     `;
-        const loremContent = lorem.generateParagraphs(10);
+        const loremContent = lorem.generateParagraphs(100);
         const htmlContent = `
     <html><body><p>This is content for multiple pages.</p><p>${loremContent}</p></body></html>
     `;
@@ -89,7 +89,7 @@ describe('PDFGenerator', () => {
         yield promises_1.default.writeFile('output/headerFooterFirstPageOnly.pdf', pdfBuffer);
     }));
     it('should apply top margin from second page onwards', () => __awaiter(void 0, void 0, void 0, function* () {
-        const loremContent = lorem.generateParagraphs(10);
+        const loremContent = lorem.generateParagraphs(100);
         const htmlContent = `
     <html><body><p>This content spans multiple pages.</p><p>${loremContent}</p></body></html>
     `;
