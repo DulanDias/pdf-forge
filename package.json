@@ -1,8 +1,14 @@
 {
-    "name": "node-pdf-generator",
+    "name": "pdf-forge",
     "version": "1.0.0",
     "description": "Node.js package for generating PDFs with HTML/CSS, watermarks, headers, footers, and more.",
     "main": "dist/index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DulanDias/pdf-forge.git"
+    },
+    "author": "Dulan Dias <dulansdias@gmail.com",
+    "license": "MIT",
     "scripts": {
         "build": "tsc",
         "test": "tsc -p tsconfig.test.json && jest",
