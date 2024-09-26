@@ -1,12 +1,14 @@
 import sharp from 'sharp';
 import { Page } from 'puppeteer';
+import fetch from 'node-fetch';
 
 /**
  * Optimize images in the HTML content to reduce size and improve performance.
  * @param page Puppeteer Page object.
  */
 export const optimizeImages = async (page: Page): Promise<void> => {
-  const images = await page.$$eval('img', imgs => imgs.map(img => img.src));
+  // Use type assertion to cast elements as HTMLImageElement
+  const images = await page.$$eval('img', imgs => imgs.map(img => (img as HTMLImageElement).src));
 
   for (let src of images) {
     if (src.startsWith('http')) {
@@ -24,7 +26,15 @@ export const optimizeImages = async (page: Page): Promise<void> => {
   }
 };
 
+/**
+ * Downloads and optimizes an image from a URL.
+ * @param url The URL of the image.
+ * @returns The optimized image as a base64 data URI.
+ */
 async function downloadAndOptimizeImage(url: string): Promise<string> {
-  // Implement downloading of image and optimizing with sharp
-  return url; // Replace this with actual optimized image as data URL
+  const response = await fetch(url);
+  const buffer = await response.buffer();
+  
+  const optimizedImageBuffer = await sharp(buffer).jpeg({ quality: 80 }).toBuffer();
+  return `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
 }

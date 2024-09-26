@@ -1,4 +1,5 @@
-import { WatermarkOptions } from './watermarkOptions';
+import { WatermarkOptions } from '../types/watermarkOptions';
+import puppeteer from 'puppeteer';
 
 /**
  * Interface for configuring the options used to generate a PDF.
