@@ -1,5 +1,5 @@
 import { Page } from 'puppeteer';
-import { WatermarkOptions, TextWatermarkOptions, ImageWatermarkOptions, PatternWatermarkOptions } from '../src/types/watermarkOptions';
+import { WatermarkOptions, TextWatermarkOptions, ImageWatermarkOptions, PatternWatermarkOptions } from '../types/watermarkOptions';
 
 /**
  * Apply the appropriate watermark (text, image, or pattern) to the page.
