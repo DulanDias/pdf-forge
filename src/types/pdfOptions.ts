@@ -1,5 +1,5 @@
 import { WatermarkOptions } from '../types/watermarkOptions';
-import puppeteer from 'puppeteer';
+import puppeteer, { PaperFormat } from 'puppeteer';
 
 /**
  * Interface for configuring the options used to generate a PDF.
@@ -10,7 +10,7 @@ export interface PDFOptions {
   displayHeaderFooter?: boolean; // Display headers and footers
   firstPageHeaderOnly?: boolean; // Show header on the first page only
   topMarginSecondPage?: string; // Top margin from second page onward
-  pageSize?: 'Letter' | 'A4' | 'Legal' | string; // Page size (A4, Letter, etc.)
+  pageSize?: PaperFormat;
   margin?: puppeteer.PDFMargin; // Margins for the PDF
   scale?: number; // Scale factor for the PDF content
   landscape?: boolean; // Landscape mode

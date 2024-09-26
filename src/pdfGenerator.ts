@@ -1,10 +1,10 @@
-import puppeteer from 'puppeteer';
+import puppeteer, { PaperFormat } from 'puppeteer';
 import fs from 'fs/promises';
 import { PDFOptions } from './types/pdfOptions';
 import { compileTemplate } from '../utils/templating';
 import { optimizeImages } from '../utils/imageOptimizer';
 import { applyWatermark } from '../utils/watermark';
-import { addPasswordProtection } from '../utils/security';
+// import { addPasswordProtection } from '../utils/security'; @TODO
 import { Hooks } from './types/hooks';
 
 /**
@@ -54,28 +54,28 @@ export class PDFGenerator {
     }
 
     // Generate the PDF with the provided options
-    let pdfBuffer = await page.pdf({
-      format: options.pageSize || 'A4',
-      displayHeaderFooter: options.displayHeaderFooter || false,
-      headerTemplate: options.headerTemplate || '',
-      footerTemplate: options.footerTemplate || '',
-      margin: options.margin || { top: '1in', bottom: '1in', left: '1in', right: '1in' },
-      scale: options.scale || 1,
-      landscape: options.landscape || false,
-      printBackground: options.printBackground || false,
-      preferCSSPageSize: options.preferCSSPageSize || false,
-      pageRanges: options.pageRanges || '',
-    });
+let pdfBuffer = await page.pdf({
+    format: options.pageSize || 'A4',  
+    displayHeaderFooter: options.displayHeaderFooter || false,
+    headerTemplate: options.headerTemplate || '',
+    footerTemplate: options.footerTemplate || '',
+    margin: options.margin || { top: '1in', bottom: '1in', left: '1in', right: '1in' },
+    scale: options.scale || 1,
+    landscape: options.landscape || false,
+    printBackground: options.printBackground || false,
+    preferCSSPageSize: options.preferCSSPageSize || false,
+    pageRanges: options.pageRanges || '',
+  });
 
     // Post-processing hook
     if (this.hooks?.afterRender) {
       pdfBuffer = this.hooks.afterRender(pdfBuffer, options);
     }
 
-    // Add password protection if required
-    if (options.password) {
-      pdfBuffer = await addPasswordProtection(pdfBuffer, options.password);
-    }
+    // Add password protection if required @TODO
+    // if (options.password) {
+    //   pdfBuffer = await addPasswordProtection(pdfBuffer, options.password);
+    // }
 
     await browser.close();
     return pdfBuffer;
