@@ -15,8 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pdfGenerator_1 = require("../src/pdfGenerator");
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
+const lorem_ipsum_1 = require("lorem-ipsum");
 describe('PDFGenerator', () => {
     let pdfGenerator;
+    const lorem = new lorem_ipsum_1.LoremIpsum();
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
         const outputDir = path_1.default.resolve(__dirname, '../output');
         try {
@@ -71,8 +73,9 @@ describe('PDFGenerator', () => {
         Page <span class="pageNumber"></span> of <span class="totalPages"></span>
       </div>
     `;
+        const loremContent = lorem.generateParagraphs(10);
         const htmlContent = `
-    <html><body><p>This is content for multiple pages.</p></body></html>
+    <html><body><p>This is content for multiple pages.</p><p>${loremContent}</p></body></html>
     `;
         const pdfBuffer = yield pdfGenerator.generatePDF(htmlContent, {}, {
             headerTemplate: headerHtml,
@@ -86,8 +89,9 @@ describe('PDFGenerator', () => {
         yield promises_1.default.writeFile('output/headerFooterFirstPageOnly.pdf', pdfBuffer);
     }));
     it('should apply top margin from second page onwards', () => __awaiter(void 0, void 0, void 0, function* () {
+        const loremContent = lorem.generateParagraphs(10);
         const htmlContent = `
-    <html><body><p>This content spans multiple pages.</p></body></html>
+    <html><body><p>This content spans multiple pages.</p><p>${loremContent}</p></body></html>
     `;
         const headerHtml = `<div style="font-size: 12px; text-align: center;">Header on First Page</div>`;
         const footerHtml = `<div style="font-size: 10px; text-align: center;">Footer</div>`;
@@ -190,10 +194,8 @@ describe('PDFGenerator', () => {
     it('should generate a PDF with a header containing an image and SVG', () => __awaiter(void 0, void 0, void 0, function* () {
         const headerWithImageAndSvg = `
       <div style="text-align: center;">
-        <img src="https://example.com/logo.png" width="100" />
-        <svg height="50" width="200">
-          <rect width="200" height="50" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" />
-        </svg>
+        <img src="https://picsum.photos/100" width="100" />
+        <svg viewBox="0 0 780 250" aria-hidden="true"><path fill="#231F20" d="M240,250h100v-50h100V0H240V250z M340,50h50v100h-50V50z M480,0v200h100V50h50v150h50V50h50v150h50V0H480z M0,200h100V50h50v150h50V0H0V200z"></path></svg>
       </div>
     `;
         const htmlContent = `<html><body><p>PDF with header image and SVG.</p></body></html>`;
