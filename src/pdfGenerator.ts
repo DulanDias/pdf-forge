@@ -33,13 +33,20 @@ export class PDFGenerator {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
-        // Read and compile the template
-        let templateContent = await fs.readFile(templatePath, 'utf8');
-        const compiledHtml = compileTemplate(templateContent, templateData);
+        let compiledHtml: string;
+
+        // Check if the templatePath is an HTML file path or direct HTML string
+        if (templatePath.endsWith('.html')) {
+            const templateContent = await fs.readFile(templatePath, 'utf8');
+            compiledHtml = compileTemplate(templateContent, templateData);
+        } else {
+            // Direct HTML string
+            compiledHtml = templatePath;
+        }
 
         // Pre-processing hook
         if (this.hooks?.beforeRender) {
-            templateContent = this.hooks.beforeRender(compiledHtml, options);
+            compiledHtml = this.hooks.beforeRender(compiledHtml, options);
         }
 
         // Load the HTML content into Puppeteer
@@ -67,13 +74,13 @@ export class PDFGenerator {
             pageRanges: options.pageRanges || '',
         });
 
-         // Convert Uint8Array to Buffer (required for Node.js compatibility)
-         pdfBuffer = Buffer.from(pdfBuffer);
+        // Convert Uint8Array to Buffer (required for Node.js compatibility)
+        pdfBuffer = Buffer.from(pdfBuffer);
 
-         // Post-processing hook
-         if (this.hooks?.afterRender) {
-             pdfBuffer = this.hooks.afterRender(Buffer.from(pdfBuffer), options);
-         }
+        // Post-processing hook
+        if (this.hooks?.afterRender) {
+            pdfBuffer = this.hooks.afterRender(Buffer.from(pdfBuffer), options);
+        }
 
         // Add password protection if required @TODO
         // if (options.password) {

@@ -41,6 +41,7 @@ describe('PDFGenerator', () => {
     </body>
     </html>
     `;
+
     const pdfBuffer = await pdfGenerator.generatePDF(htmlContent, {}, {
       pageSize: 'A4'
     });

@@ -42,12 +42,19 @@ class PDFGenerator {
         return __awaiter(this, void 0, void 0, function* () {
             const browser = yield puppeteer_1.default.launch();
             const page = yield browser.newPage();
-            // Read and compile the template
-            let templateContent = yield promises_1.default.readFile(templatePath, 'utf8');
-            const compiledHtml = (0, templating_1.compileTemplate)(templateContent, templateData);
+            let compiledHtml;
+            // Check if the templatePath is an HTML file path or direct HTML string
+            if (templatePath.endsWith('.html')) {
+                const templateContent = yield promises_1.default.readFile(templatePath, 'utf8');
+                compiledHtml = (0, templating_1.compileTemplate)(templateContent, templateData);
+            }
+            else {
+                // Direct HTML string
+                compiledHtml = templatePath;
+            }
             // Pre-processing hook
             if ((_a = this.hooks) === null || _a === void 0 ? void 0 : _a.beforeRender) {
-                templateContent = this.hooks.beforeRender(compiledHtml, options);
+                compiledHtml = this.hooks.beforeRender(compiledHtml, options);
             }
             // Load the HTML content into Puppeteer
             yield page.setContent(compiledHtml, { waitUntil: 'networkidle0' });
